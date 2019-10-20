@@ -4,7 +4,8 @@
 	<title>Game</title>
 		<link href="https://fonts.googleapis.com/css?family=Bungee+Inline&display=swap&subset=latin-ext,vietnamese" rel="stylesheet">
 	<style>
-		html{font-family: 'Bungee Inline', cursive;}
+		body{font-family: 'Bungee Inline', cursive;
+			overflow-y: hidden;}
 		h1, h2{margin: 0; top:0;}
 		.canvas{position: absolute;
 			transform: translate(-50%,30%);
@@ -30,6 +31,16 @@
 			top:90%;
 			left: 50%;
 			font-size: 1em;}
+
+		.sq{width: 5px;
+			height: 5px;
+			background:blue;
+			position: absolute;
+			animation: a 5s infinite ease-in;
+			z-index: -1;}
+
+		@keyframes a{from{top:0px; opacity: 0;}
+					to{top:100%; opacity: 1;}}
 	</style>
 </head>
 <body>
@@ -42,7 +53,30 @@
 
 	<h3>How to use ◀, ▲, ▼, ▶</h3>
 
-	<script> 
+	<div class="sq" id="sqback"></div>
+		<script type="text/javascript">
+//배경
+			for(var i=0; i<1000; i++){
+			var s = sqback.cloneNode(true);
+			s.id = i;
+			s.style.position = "fixed";
+			s.style.left = 10*i + "px" ;
+			s.style.animationDuration = Math.random()*10 + "s";
+			s.style.background = randomColor();
+			document.body.appendChild(s);  }
+
+			function randomColor(){
+			 	var rr = Math.random() * 255;
+				 var gg = Math.random() * 200;
+				 var bb = Math.random() * 200;
+			 	var tt = "rgb(" + rr + "," + gg + "," + bb + ")";
+			 return tt;
+			}
+		</script>
+
+
+<script> 
+//게임
 		const canvas = document.querySelector(".canvas");
 		const ctx = canvas.getContext("2d");
 		const scale = 10;
@@ -171,9 +205,9 @@
 			 var tt = "rgb(" + rr + "," + gg + "," + bb + ")";
 			 return tt;}
 		}
-
-
-
+		
 	</script>
+
+
 </body>
 </html>
