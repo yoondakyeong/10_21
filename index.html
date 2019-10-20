@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game</title>
+		<link href="https://fonts.googleapis.com/css?family=Bungee+Inline&display=swap&subset=latin-ext,vietnamese" rel="stylesheet">
+	<style>
+		html{font-family: 'Bungee Inline', cursive;}
+		h1, h2{margin: 0; top:0;}
+		.canvas{position: absolute;
+			transform: translate(-50%,30%);
+			left: 50%;}
+
+		h1{position: absolute;
+			transform: translate(-50%,0%);
+			left: 50%;
+			font-size: 2.5em;
+			z-index: 9;}
+
+		h2{position: absolute;
+			transform: translate(-50%,0%);
+			top:5%;
+			left: 50%;
+			font-size: 4em;
+			-webkit-text-stroke-width: 0.1px;
+			-webkit-text-stroke-color:black;
+			}
+
+		h3{position: absolute;
+			transform: translate(-50%,0%);
+			top:90%;
+			left: 50%;
+			font-size: 1em;}
+	</style>
+</head>
+<body>
+	<h1>Let's play</h1> 
+	<h2><span style="color: green;">SNAKE</span> 
+		<span style="color:yellow;">GAME</span></h2>
+
+	<canvas class="canvas" height="500" width="500" style="background-color: black">
+	</canvas>	
+
+	<h3>How to use ◀, ▲, ▼, ▶</h3>
+
+	<script> 
+		const canvas = document.querySelector(".canvas");
+		const ctx = canvas.getContext("2d");
+		const scale = 10;
+		const rows  = canvas.height / scale;
+		const columns = canvas.width / scale;
+		var snake;
+
+		(function setup(){
+			snake = new Snake();
+			fruit = new Fruit();
+			fruit.pickLocation();
+			
+			window.setInterval(() => {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				snake.update();
+				snake.draw();
+				fruit.draw();
+
+				if (snake.eat(fruit)) {
+					fruit.pickLocation();
+				}
+			
+			}, 250);
+		}());
+
+		window.addEventListener('keydown', ((evt) => {
+			const direction = evt.key.replace('Arrow','');
+			console.log(direction)
+
+			snake.changeDirection(direction);
+		}))
+
+
+//뱀 작동,꼬리,
+		function Snake() {
+			this.x = 0;
+			this.y = 0;
+			this.xSpeed = scale *1;
+			this.ySpeed = 0;
+			this.total = 0;
+			this.tail = [];
+
+			this.draw = function(){
+				ctx.fillStyle = "#FFFFFF";
+
+				for (let i=0; i<this.tail.length; i++){
+					ctx.fillRect(this.tail[i].x, this.tail[i].y, scale, scale);
+				}
+
+
+				ctx.fillRect(this.x, this.y, scale, scale);
+			}
+
+			this.update = function(){
+				for (let i=0; i<this.tail.length -1; i++){
+					this.tail[i] = this.tail[i+1];
+				}
+
+				this.tail[this.total - 1] = {x: this.x, y: this.y};
+
+
+
+				this.x += this.xSpeed;
+				this.y += this.ySpeed;
+
+				if (this.x > canvas.width){this.x = 0;}
+				if (this.y > canvas.height){this.y = 0;}
+				if (this.x < 0 ){this.x = canvas.width;}
+				if (this.y < 0){this.y = canvas.height;}
+			}
+
+			this.changeDirection = function(direction){
+				switch(direction) {
+					case 'Up':
+					this.xSpeed = 0;
+					this.ySpeed = -scale * 1;
+					break;
+
+					case 'Down':
+					this.xSpeed = 0;
+					this.ySpeed = scale * 1;
+					break;
+
+					case 'Left':
+					this.xSpeed = -scale * 1;
+					this.ySpeed = 0;
+					break;
+
+					case 'Right':
+					this.xSpeed = scale * 1;
+					this.ySpeed = 0;
+					break;
+				}
+			}
+//과일먹기(꼬리길게 문법?
+			this.eat = function(fruit) {
+			if (this.x === fruit.x && this.y === fruit.y) {
+				this.total++;
+				return true;
+				}
+			return false;
+			}
+		}
+
+		
+
+
+//+과일아이템
+		function Fruit() {
+			this.x;
+			this.y;
+			this.pickLocation = function(){
+				this.x = (Math.floor(Math.random() * rows -1) + 1) * scale;
+				this.y = (Math.floor(Math.random() * columns -1) + 1) * scale; 
+			}
+
+			this.draw = function(){
+				ctx.fillStyle = randomColor();
+				ctx.fillRect(this.x, this.y, scale, scale)
+			}
+
+			function randomColor(){
+			 var rr = Math.random() * 255;
+			 var gg = Math.random() * 255;
+			 var bb = Math.random() * 255;
+			 var tt = "rgb(" + rr + "," + gg + "," + bb + ")";
+			 return tt;}
+		}
+
+
+
+	</script>
+</body>
+</html>
